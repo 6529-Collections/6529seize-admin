@@ -28,6 +28,7 @@ AdminJS.registerAdapter({
 const PORT = 4000;
 
 const express = require("express");
+const bodyParser = require("body-parser");
 
 const canEditAdminUser = (request: any) => {
   const currentAdmin = request.currentAdmin.id;
@@ -39,6 +40,7 @@ const start = async () => {
   const source = await connect();
 
   const app = express();
+
   app.use(express.static("admin-assets"));
 
   const admin = new AdminJS({
@@ -164,6 +166,8 @@ const start = async () => {
     admin.watch();
   }
   app.use("/", adminRouter);
+  app.use(bodyParser.json({ limit: "50mb" }));
+  app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
   app.post(
     "/upload",
