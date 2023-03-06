@@ -2,6 +2,7 @@
 node_modules
 .vscode
 build
+.adminjs
 .DS_Store
 *.pem
 dist/
