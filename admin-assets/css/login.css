@@ -1,3 +1,7 @@
+body {
+  margin: 0 !important;
+}
+
 .jlLIlY::after {
   color: white;
   font-size: larger;

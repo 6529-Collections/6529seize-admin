@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { createGlobalStyle } from "styled-components";
+import styled from "styled-components";
 
 import { useSelector } from "react-redux";
 import {
@@ -22,15 +22,6 @@ import { ReduxState } from "adminjs";
 export const LoginWrapper: React.FC<Record<string, unknown>> = (props) => {
   return <Login {...(props as LoginProps)} />;
 };
-
-const GlobalStyle = createGlobalStyle`
-  html, body, #app {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-`;
 
 const Wrapper = styled(Box)`
   align-items: center;
@@ -61,7 +52,6 @@ export const Login: React.FC<LoginProps> = (props) => {
 
   return (
     <>
-      <GlobalStyle />
       <Wrapper flex variant="grey">
         <Box
           bg="white"
