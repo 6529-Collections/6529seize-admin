@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Box, H2, H5, Text } from "@adminjs/design-system";
-import { UploadDistributionComponent } from "./uploadDistribution";
 
 const pageHeaderHeight = 284;
 const pageHeaderPaddingY = 74;
@@ -40,6 +39,7 @@ export const DashboardHeader: React.FC = () => {
 };
 
 const resources: { title: string; path: string }[] = [
+  { title: "+ New Distribution Plan", path: "/pages/+ New Distribution Plan" },
   { title: "Admin Users", path: "/resources/AdminUser" },
   { title: "Team", path: "/resources/Team" },
   { title: "Distributions", path: "/resources/Distribution" },
@@ -77,9 +77,6 @@ export const Dashboard: React.FC = () => {
         flexDirection="row"
         flexWrap="wrap"
         width={[1, 1, 1, 1024]}>
-        <section className="dashboardSection">
-          <UploadDistributionComponent />
-        </section>
         {resources.map((box, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <Box key={index} width={[1, 1 / 2, 1 / 2, 1 / 3]} p="lg">

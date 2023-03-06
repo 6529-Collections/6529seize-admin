@@ -6,6 +6,7 @@ import * as AdminJSTypeorm from "@adminjs/typeorm";
 import { authenticate, connect } from "./db-admin";
 import { uploadDistribution } from "./distribution-upload";
 import { AdminUser } from "./entities/IAdminUser";
+import { LoginWrapper } from "./login";
 
 const multer = require("multer");
 const storage = multer.memoryStorage();
@@ -65,6 +66,9 @@ const start = async () => {
             delete: {
               isAccessible: canEditAdminUser,
             },
+            bulkDelete: {
+              isAccessible: false,
+            },
           },
         },
       },
@@ -90,6 +94,7 @@ const start = async () => {
         options: {
           perPage: 50,
           listProperties: ["contract", "card_id", "phase", "wallet", "count"],
+          showProperties: ["contract", "card_id", "phase", "wallet", "count"],
           actions: {
             new: { isAccessible: false },
             list: {
@@ -131,7 +136,7 @@ const start = async () => {
     branding: {
       logo: "/Seize_Logo_Glasses_2.png",
       favicon: "https://seize.io/favicon.ico",
-      companyName: "SEIZE ADMIN",
+      companyName: "SEIZE.IO ADMIN",
       withMadeWithLove: false,
     },
     assets: {
@@ -140,8 +145,24 @@ const start = async () => {
     dashboard: {
       component: "CustomDashboard",
     },
+    pages: {
+      "+ New Distribution Plan": {
+        component: "UploadDistribution",
+      },
+    },
+    settings: {
+      defaultPerPage: 50,
+    },
   });
   admin.componentLoader.add("CustomDashboard", "./dashboard");
+  admin.componentLoader.add("UploadDistribution", "./uploadDistribution");
+  admin.componentLoader.add("Login", "./login");
+  admin.overrideLogin({
+    component: LoginWrapper,
+    props: {
+      message: "",
+    },
+  });
 
   const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
     admin,

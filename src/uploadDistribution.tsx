@@ -5,6 +5,8 @@ import axios from "axios";
 export const UploadDistributionComponent: React.FC = (props: any) => {
   const [success, setSuccess] = useState<{
     status: boolean;
+    cardId?: number;
+    contract?: number;
     file?: boolean;
     photos?: boolean;
   }>({ status: false });
@@ -102,12 +104,15 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
           });
           setSuccess({
             status: true,
+            cardId: distributionCardId,
+            contract: distributionContract,
             file: distributionFile != undefined && distributionFile != null,
             photos: distributionPhotos.length > 0,
           });
           setDistributionCardId(undefined);
           setDistributionContract("");
           setDistributionFile(undefined);
+          setDistributionPhotos([]);
           setUploadDisabled(false);
         } catch (err: any) {
           console.log(err);
@@ -187,9 +192,9 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
           Upload Successful!
           {success.file && (
             <>
-              {" "}
+              <br />
               <a
-                href={`/resources/Distribution?filters.contract=${distributionContract}&filters.card_id=${distributionCardId}`}
+                href={`/resources/Distribution?filters.contract=${success.contract}&filters.card_id=${success.cardId}`}
                 target="_blank">
                 VIEW DISTRIBUTION
               </a>
@@ -197,9 +202,9 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
           )}
           {success.photos && (
             <>
-              {" "}
+              <br />
               <a
-                href={`/resources/DistributionPhoto?filters.contract=${distributionContract}&filters.card_id=${distributionCardId}`}
+                href={`/resources/DistributionPhoto?filters.contract=${success.contract}&filters.card_id=${success.cardId}`}
                 target="_blank">
                 VIEW PHOTOS
               </a>
