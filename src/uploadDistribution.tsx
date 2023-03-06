@@ -6,7 +6,7 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
   const [success, setSuccess] = useState<{
     status: boolean;
     cardId?: number;
-    contract?: number;
+    contract?: string;
     file?: boolean;
     photos?: boolean;
   }>({ status: false });
