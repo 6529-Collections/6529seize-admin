@@ -40,7 +40,10 @@ export const DashboardHeader: React.FC = () => {
 };
 
 const resources: { title: string; path: string }[] = [
+  { title: "Admin Users", path: "/resources/AdminUser" },
   { title: "Team", path: "/resources/Team" },
+  { title: "Distributions", path: "/resources/Distribution" },
+  { title: "Distribution Photos", path: "/resources/DistributionPhoto" },
 ];
 
 const Card = styled(Box)`
