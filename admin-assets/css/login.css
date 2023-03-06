@@ -2,6 +2,10 @@ body {
   margin: 0 !important;
 }
 
+#app {
+  height: 100vh;
+}
+
 .jlLIlY::after {
   color: white;
   font-size: larger;
