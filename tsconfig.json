@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "target": "es6",
+    "module": "commonjs",
+    "lib": ["es6", "DOM", "dom.iterable"],
+    "allowJs": true,
+    "outDir": "build",
+    "rootDir": "src",
+    "strict": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "jsx": "react",
+    "emitDecoratorMetadata": true
+  },
+  "emitDecoratorMetadata": true,
+  "experimentalDecorators": true,
+  "strictPropertyInitialization": false
+}
