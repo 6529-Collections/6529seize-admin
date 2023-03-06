@@ -182,7 +182,7 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
           {e}
         </Text>
       ))}
-      {success && (
+      {success.status && (
         <Text>
           Upload Successful!
           {success.file && (

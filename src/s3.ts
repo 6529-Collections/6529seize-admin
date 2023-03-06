@@ -27,7 +27,7 @@ export const uploadPhotos = async (
   await Promise.all(
     photos.map(async (p) => {
       const name = p.name;
-      const key = `distribution/${contract}/${cardId}/${name}`;
+      const key = `distribution/${process.env.NODE_ENV}/${contract}/${cardId}/${name}`;
       await uploadFileToS3(s3, p.path, key);
       keys.push(`https://d3lqz0a4bldqgf.cloudfront.net/${key}`);
     })
