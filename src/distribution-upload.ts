@@ -53,7 +53,7 @@ export async function uploadDistribution(
   cardId: number,
   distribution: any,
   photos: any[]
-): Promise<Boolean> {
+): Promise<{ success: boolean; error?: any }> {
   try {
     return await source.manager.transaction(
       async (transactionalEntityManager) => {
@@ -74,6 +74,7 @@ export async function uploadDistribution(
             myphotos = await uploadPhotos(contract, cardId, photos);
           } catch (err) {
             console.log("Error uploading photos:", err);
+            return { success: false, error: err };
           }
           const distributionPhotos: DistributionPhoto[] = [];
           myphotos
@@ -99,11 +100,11 @@ export async function uploadDistribution(
             .save(distributionPhotos);
           console.log("Uploading photos...Done");
         }
-        return true;
+        return { success: true };
       }
     );
   } catch (err: any) {
     console.log("Something went wrong", err);
-    return false;
+    return { success: false, error: err };
   }
 }

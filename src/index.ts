@@ -211,10 +211,10 @@ const start = async () => {
           photos
         );
 
-        if (response) {
+        if (response.success) {
           res.send("Upload complete.");
         } else {
-          res.status(400).send("Upload failed.");
+          res.status(400).send(`${response.error}`);
         }
       }
     }
