@@ -160,7 +160,9 @@ const start = async () => {
       name: "6529admin",
     }
   );
-  admin.watch();
+  if (process.env.NODE_ENV == "local") {
+    admin.watch();
+  }
   app.use("/", adminRouter);
 
   app.post(
