@@ -1,7 +1,9 @@
 import { DataSource, EntityManager } from "typeorm";
+import { MANIFOLD } from "./constans";
 import { Distribution, DistributionPhoto } from "./entities/IDistribution";
 import { uploadPhotos } from "./s3";
 
+const mysql = require("mysql");
 const fs = require("fs");
 const csv = require("csv-parser");
 
@@ -33,6 +35,28 @@ async function uploadDistributionFile(
     csvStream.on("error", (err: any) => {
       reject(err);
     });
+  });
+
+  const wallets = [...distributions].map((d) => d.wallet);
+
+  const mintedCounts: { to_address: string; mint_count: number }[] =
+    await transactionalEntityManager.query(`
+      SELECT to_address, SUM(token_count) AS mint_count
+      FROM transactions
+      WHERE from_address = ${mysql.escape(MANIFOLD)}
+      AND to_address IN (${mysql.escape(wallets)}) 
+      AND contract = ${mysql.escape(contract)}
+      AND token_id = ${mysql.escape(cardId)}
+      GROUP BY to_address;
+  `);
+
+  mintedCounts.map((mc) => {
+    const distr = distributions.find(
+      (d) => d.wallet.toUpperCase() == mc.to_address.toUpperCase()
+    );
+    if (distr) {
+      distr.mint_count = mc.mint_count;
+    }
   });
 
   await transactionalEntityManager
