@@ -196,6 +196,7 @@ const start = async () => {
     async (req: any, res: any) => {
       const contract = req.fields["contract"];
       const cardId = req.fields["card_id"];
+      const snapshotBlock = req.fields["snapshot_block"];
       const distributionFile = req.files["distribution"];
       const photoKeys: any[] = Object.keys(req.files).filter((f: any) =>
         f.startsWith("photo")
@@ -207,6 +208,10 @@ const start = async () => {
         res.status(400).send(msg);
       } else if (!cardId || cardId == "undefined") {
         const msg = "Bad Card ID";
+        console.log("Upload Bad Request", msg);
+        res.status(400).send(msg);
+      } else if (!snapshotBlock || snapshotBlock == "undefined") {
+        const msg = "Bad Snapshot Block";
         console.log("Upload Bad Request", msg);
         res.status(400).send(msg);
       } else if (
@@ -228,6 +233,7 @@ const start = async () => {
           source,
           contract,
           cardId,
+          snapshotBlock,
           distributionFile,
           photos
         );

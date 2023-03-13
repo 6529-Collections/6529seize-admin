@@ -33,6 +33,15 @@ export class Distribution extends BaseEntity {
   @Column({ type: "varchar", length: 50 })
   wallet!: string;
 
+  @Column({ type: "int", default: 0 })
+  wallet_tdh!: number;
+
+  @Column({ type: "int", default: 0 })
+  wallet_balance!: number;
+
+  @Column({ type: "int", default: 0 })
+  wallet_unique_balance!: number;
+
   @Column({ type: "int" })
   count!: number;
 

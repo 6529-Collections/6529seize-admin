@@ -11,6 +11,7 @@ async function uploadDistributionFile(
   transactionalEntityManager: EntityManager,
   contract: string,
   cardId: number,
+  snapshotBlock: number,
   distributionFile: any
 ): Promise<void> {
   const distributions: Distribution[] = [];
@@ -39,6 +40,21 @@ async function uploadDistributionFile(
 
   const wallets = [...distributions].map((d) => d.wallet);
 
+  const tdhBlockResult = await transactionalEntityManager.query(
+    `SELECT block_number FROM tdh_blocks WHERE block_number < ${snapshotBlock} ORDER BY block_number DESC LIMIT 1;`
+  );
+  const tdhBlock = tdhBlockResult[0].block_number;
+
+  const tdhResult: {
+    wallet: string;
+    boosted_tdh: number;
+    memes_balance: number;
+    unique_memes: number;
+    gradients_balance: number;
+  }[] = await transactionalEntityManager.query(
+    `SELECT wallet, boosted_tdh, memes_balance, unique_memes, gradients_balance FROM tdh WHERE block = ${tdhBlock};`
+  );
+
   const mintedCounts: { to_address: string; mint_count: number }[] =
     await transactionalEntityManager.query(`
       SELECT to_address, SUM(token_count) AS mint_count
@@ -50,12 +66,20 @@ async function uploadDistributionFile(
       GROUP BY to_address;
   `);
 
-  mintedCounts.map((mc) => {
-    const distr = distributions.find(
-      (d) => d.wallet.toUpperCase() == mc.to_address.toUpperCase()
+  distributions.map((d) => {
+    const mintCount = mintedCounts.find(
+      (mc) => d.wallet.toUpperCase() == mc.to_address.toUpperCase()
     );
-    if (distr) {
-      distr.mint_count = mc.mint_count;
+    if (mintCount) {
+      d.mint_count = mintCount.mint_count;
+    }
+    const tdh = tdhResult.find(
+      (r) => d.wallet.toUpperCase() == r.wallet.toUpperCase()
+    );
+    if (tdh) {
+      d.wallet_tdh = tdh.boosted_tdh;
+      d.wallet_balance = tdh.memes_balance + tdh.gradients_balance;
+      d.wallet_unique_balance = tdh.unique_memes + tdh.gradients_balance;
     }
   });
 
@@ -75,6 +99,7 @@ export async function uploadDistribution(
   source: DataSource,
   contract: string,
   cardId: number,
+  snapshotBlock: number,
   distribution: any,
   photos: any[]
 ): Promise<{ success: boolean; error?: any }> {
@@ -87,6 +112,7 @@ export async function uploadDistribution(
             transactionalEntityManager,
             contract,
             cardId,
+            snapshotBlock,
             distribution
           );
           console.log("Uploading distribution...Done");

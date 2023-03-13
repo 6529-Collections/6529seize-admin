@@ -15,6 +15,8 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
   const [distributionContract, setDistributionContract] = React.useState<
     string | undefined
   >(undefined);
+  const [distributionSnapshotBlock, setDistributionSnapshotBlock] =
+    React.useState<number>();
   const [distributionCardId, setDistributionCardId] = React.useState<number>();
   const [distributionFile, setDistributionFile] = React.useState<
     File | undefined
@@ -32,6 +34,9 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
     }
     if (!distributionCardId) {
       newerrors.push("- missing Card ID");
+    }
+    if (!distributionSnapshotBlock) {
+      newerrors.push("- missing Distribution Block");
     }
     if (!distributionFile && distributionPhotos.length == 0) {
       newerrors.push("- provide at least one of distribution or photos");
@@ -92,6 +97,10 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
         }
         formData.append("card_id", distributionCardId!.toString());
         formData.append("contract", distributionContract!);
+        formData.append(
+          "snapshot_block",
+          distributionSnapshotBlock!.toString()
+        );
         distributionPhotos.map((dp, index) => {
           formData.append(`photo${index}`, dp);
         });
@@ -110,6 +119,7 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
             photos: distributionPhotos.length > 0,
           });
           setDistributionCardId(undefined);
+          setDistributionSnapshotBlock(undefined);
           setDistributionContract("");
           setDistributionFile(undefined);
           setDistributionPhotos([]);
@@ -144,6 +154,19 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
         min="0"
         value={distributionCardId !== undefined ? distributionCardId : ""}
         onChange={(e) => setDistributionCardId(parseInt(e.target.value))}
+      />
+      <br />
+      Snapshot Block&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input
+        className="uploadDistributionInput uploadDistributionInputNumber"
+        type="number"
+        min="0"
+        value={
+          distributionSnapshotBlock !== undefined
+            ? distributionSnapshotBlock
+            : ""
+        }
+        onChange={(e) => setDistributionSnapshotBlock(parseInt(e.target.value))}
       />
       <br />
       Distribution&nbsp;&nbsp;
