@@ -176,10 +176,10 @@ const start = async () => {
       resave: true,
       saveUninitialized: true,
       secret: "6529adminsecret",
-      cookie: {
-        httpOnly: process.env.NODE_ENV === "production",
-        secure: process.env.NODE_ENV === "production",
-      },
+      // cookie: {
+      //   httpOnly: process.env.NODE_ENV === "production",
+      //   secure: process.env.NODE_ENV === "production",
+      // },
       name: "6529admin",
     }
   );
