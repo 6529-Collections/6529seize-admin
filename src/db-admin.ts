@@ -2,6 +2,7 @@ import { DataSource } from "typeorm";
 import { Team } from "./entities/ITeam";
 import { Distribution, DistributionPhoto } from "./entities/IDistribution";
 import { AdminUser } from "./entities/IAdminUser";
+import { Royalties } from "./entities/IRoyalties";
 
 const bcrypt = require("bcrypt");
 
@@ -17,7 +18,7 @@ export async function connect() {
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
-    entities: [AdminUser, Team, Distribution, DistributionPhoto],
+    entities: [AdminUser, Team, Distribution, DistributionPhoto, Royalties],
     synchronize: true,
     logging: false,
   });

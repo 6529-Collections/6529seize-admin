@@ -7,6 +7,7 @@ import { authenticate, connect } from "./db-admin";
 import { uploadDistribution } from "./distribution-upload";
 import { AdminUser } from "./entities/IAdminUser";
 import { LoginWrapper } from "./login";
+import { Royalties } from "./entities/IRoyalties";
 
 const multer = require("multer");
 const storage = multer.memoryStorage();
@@ -112,6 +113,34 @@ const start = async () => {
           perPage: 50,
           listProperties: ["contract", "card_id", "link"],
           actions: {
+            list: {
+              before: async (request: any, context: any) => {
+                request.query.perPage = 50;
+                return request;
+              },
+            },
+          },
+        },
+      },
+      {
+        resource: Royalties,
+        options: {
+          perPage: 50,
+          listProperties: [
+            "date",
+            "contract",
+            "token_id",
+            "artist",
+            "received_royalties",
+          ],
+          actions: {
+            new: { isAccessible: false },
+            delete: {
+              isAccessible: false,
+            },
+            bulkDelete: {
+              isAccessible: false,
+            },
             list: {
               before: async (request: any, context: any) => {
                 request.query.perPage = 50;
