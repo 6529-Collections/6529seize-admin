@@ -44,9 +44,6 @@ export class Distribution extends BaseEntity {
 
   @Column({ type: "int" })
   count!: number;
-
-  @Column({ type: "int", default: 0 })
-  mint_count!: number;
 }
 
 @Entity({ name: "distribution_photo" })
