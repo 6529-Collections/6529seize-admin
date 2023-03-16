@@ -55,24 +55,7 @@ async function uploadDistributionFile(
     `SELECT wallet, boosted_tdh, memes_balance, unique_memes, gradients_balance FROM tdh WHERE block = ${tdhBlock};`
   );
 
-  const mintedCounts: { to_address: string; mint_count: number }[] =
-    await transactionalEntityManager.query(`
-      SELECT to_address, SUM(token_count) AS mint_count
-      FROM transactions
-      WHERE from_address = ${mysql.escape(MANIFOLD)}
-      AND to_address IN (${mysql.escape(wallets)}) 
-      AND contract = ${mysql.escape(contract)}
-      AND token_id = ${mysql.escape(cardId)}
-      GROUP BY to_address;
-  `);
-
   distributions.map((d) => {
-    const mintCount = mintedCounts.find(
-      (mc) => d.wallet.toUpperCase() == mc.to_address.toUpperCase()
-    );
-    if (mintCount) {
-      d.mint_count = mintCount.mint_count;
-    }
     const tdh = tdhResult.find(
       (r) => d.wallet.toUpperCase() == r.wallet.toUpperCase()
     );
