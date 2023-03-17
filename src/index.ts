@@ -7,7 +7,7 @@ import { authenticate, connect } from "./db-admin";
 import { uploadDistribution } from "./distribution-upload";
 import { AdminUser } from "./entities/IAdminUser";
 import { LoginWrapper } from "./login";
-import { Royalties } from "./entities/IRoyalties";
+import { RoyaltiesUpload } from "./entities/IRoyalties";
 
 const multer = require("multer");
 const storage = multer.memoryStorage();
@@ -123,18 +123,55 @@ const start = async () => {
         },
       },
       {
-        resource: Royalties,
+        resource: RoyaltiesUpload,
         options: {
           perPage: 50,
-          listProperties: [
-            "date",
-            "contract",
-            "token_id",
-            "artist",
-            "received_royalties",
-          ],
+          sort: {
+            sortBy: "date",
+            direction: "desc",
+          },
+          // listProperties: ["reference_date", "created_at", "url"],
+          properties: {
+            reference_date: {
+              isVisible: {
+                list: true,
+                edit: false,
+                new: false,
+                show: true,
+                filter: false,
+              },
+            },
+            date: {
+              isVisible: {
+                list: false,
+                edit: true,
+                new: true,
+                show: false,
+                filter: true,
+              },
+            },
+            url: {
+              isVisible: {
+                list: true,
+                edit: true,
+                new: true,
+                show: true,
+                filter: false,
+              },
+            },
+            created_at: {
+              isVisible: {
+                list: true,
+                edit: true,
+                new: true,
+                show: true,
+                filter: false,
+              },
+            },
+          },
           actions: {
             new: { isAccessible: false },
+            edit: { isAccessible: false },
             delete: {
               isAccessible: false,
             },
@@ -145,6 +182,24 @@ const start = async () => {
               before: async (request: any, context: any) => {
                 request.query.perPage = 50;
                 return request;
+              },
+              after: async (response: any, context: any) => {
+                response.records = response.records.map((record: any) => ({
+                  ...record,
+                  params: {
+                    ...record.params,
+                    reference_date: new Date(record.params.date).toDateString(),
+                  },
+                }));
+                return response;
+              },
+            },
+            show: {
+              after: async (response: any, context: any) => {
+                response.record.params.reference_date = new Date(
+                  response.record.params.date
+                ).toDateString();
+                return response;
               },
             },
           },

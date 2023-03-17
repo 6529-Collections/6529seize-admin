@@ -44,6 +44,7 @@ const resources: { title: string; path: string }[] = [
   { title: "Team", path: "/resources/Team" },
   { title: "Distributions", path: "/resources/Distribution" },
   { title: "Distribution Photos", path: "/resources/DistributionPhoto" },
+  { title: "Royalties Uploads", path: "/resources/RoyaltiesUpload" },
 ];
 
 const Card = styled(Box)`
