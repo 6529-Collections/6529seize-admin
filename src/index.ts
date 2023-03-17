@@ -294,8 +294,11 @@ const start = async () => {
         const msg = "Bad Card ID";
         console.log("Upload Bad Request", msg);
         res.status(400).send(msg);
-      } else if (!snapshotBlock || snapshotBlock == "undefined") {
-        const msg = "Bad Snapshot Block";
+      } else if (
+        (!snapshotBlock || snapshotBlock == "undefined") &&
+        distributionFile
+      ) {
+        const msg = "Missing Snapshot Block";
         console.log("Upload Bad Request", msg);
         res.status(400).send(msg);
       } else if (
