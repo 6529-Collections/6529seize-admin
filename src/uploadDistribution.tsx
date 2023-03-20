@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { H4, Text, Button } from "@adminjs/design-system";
 import axios from "axios";
+import { MEMELAB_CONTRACT, MEMES_CONTRACT } from "./constans";
 
 export const UploadDistributionComponent: React.FC = (props: any) => {
   const [success, setSuccess] = useState<{
@@ -35,7 +36,7 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
     if (!distributionCardId) {
       newerrors.push("- missing Card ID");
     }
-    if (!distributionSnapshotBlock) {
+    if (!distributionSnapshotBlock && distributionFile) {
       newerrors.push("- missing Distribution Block");
     }
     if (!distributionFile && distributionPhotos.length == 0) {
@@ -97,10 +98,13 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
         }
         formData.append("card_id", distributionCardId!.toString());
         formData.append("contract", distributionContract!);
-        formData.append(
-          "snapshot_block",
-          distributionSnapshotBlock!.toString()
-        );
+
+        if (distributionSnapshotBlock) {
+          formData.append(
+            "snapshot_block",
+            distributionSnapshotBlock.toString()
+          );
+        }
         distributionPhotos.map((dp, index) => {
           formData.append(`photo${index}`, dp);
         });
@@ -140,12 +144,22 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
       <H4>NEW DISTRIBUTION PLAN</H4>
       <br />
       Contract&nbsp;&nbsp;
-      <input
+      {/* <input
         className="uploadDistributionInput"
         type="text"
         value={distributionContract !== undefined ? distributionContract : ""}
         onChange={(e) => setDistributionContract(e.target.value)}
-      />
+      /> */}
+      <select
+        className="uploadDistributionDropdown"
+        value={distributionContract !== undefined ? distributionContract : ""}
+        onChange={(e) => setDistributionContract(e.target.value)}>
+        <option value="" disabled>
+          Choose contract
+        </option>
+        <option value={MEMES_CONTRACT}>THE MEMES ({MEMES_CONTRACT})</option>
+        <option value={MEMELAB_CONTRACT}>MEME LAB ({MEMELAB_CONTRACT})</option>
+      </select>
       <br />
       Card ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <input

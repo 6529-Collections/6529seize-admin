@@ -7,6 +7,7 @@ import { authenticate, connect } from "./db-admin";
 import { uploadDistribution } from "./distribution-upload";
 import { AdminUser } from "./entities/IAdminUser";
 import { LoginWrapper } from "./login";
+import { RoyaltiesUpload } from "./entities/IRoyalties";
 
 const multer = require("multer");
 const storage = multer.memoryStorage();
@@ -121,6 +122,89 @@ const start = async () => {
           },
         },
       },
+      {
+        resource: RoyaltiesUpload,
+        options: {
+          perPage: 50,
+          sort: {
+            sortBy: "date",
+            direction: "desc",
+          },
+          // listProperties: ["reference_date", "created_at", "url"],
+          properties: {
+            reference_date: {
+              isVisible: {
+                list: true,
+                edit: false,
+                new: false,
+                show: true,
+                filter: false,
+              },
+            },
+            date: {
+              isVisible: {
+                list: false,
+                edit: true,
+                new: true,
+                show: false,
+                filter: true,
+              },
+            },
+            url: {
+              isVisible: {
+                list: true,
+                edit: true,
+                new: true,
+                show: true,
+                filter: false,
+              },
+            },
+            created_at: {
+              isVisible: {
+                list: true,
+                edit: true,
+                new: true,
+                show: true,
+                filter: false,
+              },
+            },
+          },
+          actions: {
+            new: { isAccessible: false },
+            edit: { isAccessible: false },
+            delete: {
+              isAccessible: false,
+            },
+            bulkDelete: {
+              isAccessible: false,
+            },
+            list: {
+              before: async (request: any, context: any) => {
+                request.query.perPage = 50;
+                return request;
+              },
+              after: async (response: any, context: any) => {
+                response.records = response.records.map((record: any) => ({
+                  ...record,
+                  params: {
+                    ...record.params,
+                    reference_date: new Date(record.params.date).toDateString(),
+                  },
+                }));
+                return response;
+              },
+            },
+            show: {
+              after: async (response: any, context: any) => {
+                response.record.params.reference_date = new Date(
+                  response.record.params.date
+                ).toDateString();
+                return response;
+              },
+            },
+          },
+        },
+      },
     ],
     locale: {
       language: "en",
@@ -210,8 +294,11 @@ const start = async () => {
         const msg = "Bad Card ID";
         console.log("Upload Bad Request", msg);
         res.status(400).send(msg);
-      } else if (!snapshotBlock || snapshotBlock == "undefined") {
-        const msg = "Bad Snapshot Block";
+      } else if (
+        (!snapshotBlock || snapshotBlock == "undefined") &&
+        distributionFile
+      ) {
+        const msg = "Missing Snapshot Block";
         console.log("Upload Bad Request", msg);
         res.status(400).send(msg);
       } else if (
