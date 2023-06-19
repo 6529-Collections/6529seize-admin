@@ -141,7 +141,7 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
 
   return (
     <div className="dashboardCard">
-      <H4>NEW DISTRIBUTION PLAN</H4>
+      <H4>New Distribution Plan</H4>
       <br />
       Contract&nbsp;&nbsp;
       {/* <input
@@ -226,7 +226,7 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
       ))}
       {success.status && (
         <Text>
-          Upload Successful!
+          <b>Upload Successful!</b>
           {success.file && (
             <>
               <br />

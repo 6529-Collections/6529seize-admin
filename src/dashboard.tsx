@@ -40,11 +40,20 @@ export const DashboardHeader: React.FC = () => {
 
 const resources: { title: string; path: string }[] = [
   { title: "+ New Distribution Plan", path: "/pages/+ New Distribution Plan" },
+  {
+    title: "+ New GenMemes Allowlist",
+    path: "/pages/+ New GenMemes Allowlist",
+  },
+  { title: "OM6529", path: "break" },
   { title: "Admin Users", path: "/resources/AdminUser" },
   { title: "Team", path: "/resources/Team" },
+  { title: "Royalties", path: "/resources/RoyaltiesUpload" },
+  { title: "Distribution", path: "break" },
   { title: "Distributions", path: "/resources/Distribution" },
-  { title: "Distribution Photos", path: "/resources/DistributionPhoto" },
-  { title: "Royalties Uploads", path: "/resources/RoyaltiesUpload" },
+  { title: "Photos", path: "/resources/DistributionPhoto" },
+  { title: "GenMemes", path: "break" },
+  { title: "Collections", path: "/resources/Collections" },
+  { title: "Allowlists", path: "/resources/Allowlists" },
 ];
 
 const Card = styled(Box)`
@@ -78,14 +87,20 @@ export const Dashboard: React.FC = () => {
         flexDirection="row"
         flexWrap="wrap"
         width={[1, 1, 1, 1024]}>
-        {resources.map((box, index) => (
+        {resources.map((box, index) =>
           // eslint-disable-next-line react/no-array-index-key
-          <Box key={index} width={[1, 1 / 2, 1 / 2, 1 / 3]} p="lg">
-            <Card as="a" href={box.path}>
+          box.path === "break" ? (
+            <Box width={1} mt="xl">
               <H5 mt="lg">{box.title}</H5>
-            </Card>
-          </Box>
-        ))}
+            </Box>
+          ) : (
+            <Box key={index} width={[1, 1 / 2, 1 / 2, 1 / 3]} p="lg">
+              <Card as="a" href={box.path}>
+                <H5 mt="lg">{box.title}</H5>
+              </Card>
+            </Box>
+          )
+        )}
       </Box>
     </Box>
   );

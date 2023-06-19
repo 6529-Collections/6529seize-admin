@@ -8,6 +8,8 @@ import { uploadDistribution } from "./distribution-upload";
 import { AdminUser } from "./entities/IAdminUser";
 import { LoginWrapper } from "./login";
 import { RoyaltiesUpload } from "./entities/IRoyalties";
+import { uploadGenMemesAllowlist } from "./genmemes-upload";
+import { GenMemesAllowlist, GenMemesCollection } from "./entities/IGenMeme";
 
 const multer = require("multer");
 const storage = multer.memoryStorage();
@@ -93,6 +95,10 @@ const start = async () => {
       {
         resource: Distribution,
         options: {
+          id: "Distributions",
+          navigation: {
+            name: "Distribution",
+          },
           perPage: 50,
           listProperties: ["contract", "card_id", "phase", "wallet", "count"],
           showProperties: ["contract", "card_id", "phase", "wallet", "count"],
@@ -110,6 +116,10 @@ const start = async () => {
       {
         resource: DistributionPhoto,
         options: {
+          id: "Photos",
+          navigation: {
+            name: "Distribution",
+          },
           perPage: 50,
           listProperties: ["contract", "card_id", "link"],
           actions: {
@@ -125,6 +135,7 @@ const start = async () => {
       {
         resource: RoyaltiesUpload,
         options: {
+          id: "Royalties",
           perPage: 50,
           sort: {
             sortBy: "date",
@@ -205,6 +216,45 @@ const start = async () => {
           },
         },
       },
+      {
+        resource: GenMemesCollection,
+        options: {
+          id: "Collections",
+          navigation: {
+            name: "GenMemes",
+          },
+          perPage: 50,
+          listProperties: ["merkle_root", "collection_id", "phase"],
+          editProperties: ["collection_id", "phase"],
+          actions: {
+            list: {
+              before: async (request: any, context: any) => {
+                request.query.perPage = 50;
+                return request;
+              },
+            },
+          },
+        },
+      },
+      {
+        resource: GenMemesAllowlist,
+        options: {
+          id: "Allowlists",
+          navigation: {
+            name: "GenMemes",
+          },
+          perPage: 50,
+          listProperties: ["merkle_root", "address", "spots", "keccak"],
+          actions: {
+            list: {
+              before: async (request: any, context: any) => {
+                request.query.perPage = 50;
+                return request;
+              },
+            },
+          },
+        },
+      },
     ],
     locale: {
       language: "en",
@@ -218,8 +268,9 @@ const start = async () => {
       },
     },
     branding: {
-      logo: "/Seize_Logo_Glasses_2.png",
-      favicon: "https://seize.io/favicon.ico",
+      logo: "https://d3lqz0a4bldqgf.cloudfront.net/seize_images/Seize_Logo_Glasses_2.png",
+      favicon:
+        "https://d3lqz0a4bldqgf.cloudfront.net/seize_images/Seize_Logo_Icon.png",
       companyName: "SEIZE.IO ADMIN",
       withMadeWithLove: false,
     },
@@ -233,6 +284,9 @@ const start = async () => {
       "+ New Distribution Plan": {
         component: "UploadDistribution",
       },
+      "+ New GenMemes Allowlist": {
+        component: "UploadGenMemesAllowlist",
+      },
     },
     settings: {
       defaultPerPage: 50,
@@ -240,6 +294,10 @@ const start = async () => {
   });
   admin.componentLoader.add("CustomDashboard", "./dashboard");
   admin.componentLoader.add("UploadDistribution", "./uploadDistribution");
+  admin.componentLoader.add(
+    "UploadGenMemesAllowlist",
+    "./uploadGenMemesAllowlist"
+  );
   admin.componentLoader.add("Login", "./login");
   admin.overrideLogin({
     component: LoginWrapper,
@@ -327,6 +385,28 @@ const start = async () => {
 
         if (response.success) {
           res.send("Upload complete.");
+        } else {
+          res.status(400).send(`${response.error}`);
+        }
+      }
+    }
+  );
+
+  app.post(
+    "/genmemes_allowlist",
+    upload.single("allowlist"),
+    async (req: any, res: any) => {
+      const allowlistFile = req.files["allowlist"];
+      if (!allowlistFile || allowlistFile == "undefined") {
+        const msg = "Provide 'allowlist' file";
+        console.log("Upload Bad Request", msg);
+        res.status(400).send(msg);
+      } else {
+        console.log("Uploading GenMemes Allowlist", allowlistFile?.name);
+        const response = await uploadGenMemesAllowlist(source, allowlistFile);
+
+        if (response.success) {
+          res.send(response.merkle_root);
         } else {
           res.status(400).send(`${response.error}`);
         }

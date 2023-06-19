@@ -1,9 +1,7 @@
 import { DataSource, EntityManager } from "typeorm";
-import { MANIFOLD } from "./constans";
 import { Distribution, DistributionPhoto } from "./entities/IDistribution";
 import { uploadPhotos } from "./s3";
 
-const mysql = require("mysql");
 const fs = require("fs");
 const csv = require("csv-parser");
 

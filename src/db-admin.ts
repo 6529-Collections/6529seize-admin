@@ -3,6 +3,7 @@ import { Team } from "./entities/ITeam";
 import { Distribution, DistributionPhoto } from "./entities/IDistribution";
 import { AdminUser } from "./entities/IAdminUser";
 import { RoyaltiesUpload } from "./entities/IRoyalties";
+import { GenMemesAllowlist, GenMemesCollection } from "./entities/IGenMeme";
 
 const bcrypt = require("bcrypt");
 
@@ -24,6 +25,8 @@ export async function connect() {
       Distribution,
       DistributionPhoto,
       RoyaltiesUpload,
+      GenMemesAllowlist,
+      GenMemesCollection,
     ],
     synchronize: true,
     logging: false,

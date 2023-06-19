@@ -6,28 +6,23 @@ body {
   height: 100vh;
 }
 
-.jlLIlY::after,
-.hWNDSK::after {
+.EGyQL::after {
   color: white;
   font-size: larger;
   font-weight: bolder;
-  content: "SEIZE.IO ADMIN";
+  content: "SEIZE.IO ADMIN" !important;
 }
 
-.jlLIlY img,
-.hWNDSK img {
+.EGyQL img {
   display: none;
 }
 
-.koAaEq,
-.hVkLzz {
+.bIWCUs {
   box-shadow: none;
 }
 
-.dpZFvg,
-.fuZoeI,
-.dJBkGp,
-.cfkrCg {
+.kZDHca,
+.iLudQO {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -35,33 +30,24 @@ body {
   background-color: rgb(40, 40, 40) !important;
 }
 
-.iPobhC,
-.tvIWO,
-.gJFHtn,
-.kNlHDQ {
+.jjXmSj,
+.gFbbiY {
   background-color: white !important;
   color: rgb(40, 40, 40) !important;
 }
 
-.grWBPf,
-.hCSsRz {
+.fRzYgN {
   color: white !important;
 }
 
-.gaQJNd,
-.ioJWNE {
+.hbqiof {
   background-color: rgb(40, 40, 40);
-  background-image: url("https://seize.io/Seize_Logo_Glasses_2.png");
+  background-image: url("https://d3lqz0a4bldqgf.cloudfront.net/seize_images/Seize_Logo_Glasses_2.png");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
 }
 
-.hWMGVy,
-.jaLGOh,
-.ezSKXX,
-.fjPOCc,
-.kjwEua,
-.ccOuNf {
+svg {
   display: none;
 }
