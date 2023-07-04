@@ -8,8 +8,8 @@ import { uploadDistribution } from "./distribution-upload";
 import { AdminUser } from "./entities/IAdminUser";
 import { LoginWrapper } from "./login";
 import { RoyaltiesUpload } from "./entities/IRoyalties";
-import { uploadGenMemesAllowlist } from "./genmemes-upload";
-import { GenMemesAllowlist, GenMemesCollection } from "./entities/IGenMeme";
+import { uploadNextGenAllowlist } from "./nextgen-upload";
+import { NextGenAllowlist, NextGenCollection } from "./entities/INextGen";
 
 const multer = require("multer");
 const storage = multer.memoryStorage();
@@ -217,11 +217,11 @@ const start = async () => {
         },
       },
       {
-        resource: GenMemesCollection,
+        resource: NextGenCollection,
         options: {
           id: "Collections",
           navigation: {
-            name: "GenMemes",
+            name: "NextGen",
           },
           perPage: 50,
           listProperties: ["merkle_root", "collection_id", "phase"],
@@ -237,14 +237,14 @@ const start = async () => {
         },
       },
       {
-        resource: GenMemesAllowlist,
+        resource: NextGenAllowlist,
         options: {
           id: "Allowlists",
           navigation: {
-            name: "GenMemes",
+            name: "NextGen",
           },
           perPage: 50,
-          listProperties: ["merkle_root", "address", "spots", "keccak"],
+          listProperties: ["merkle_root", "address", "spots", "info", "keccak"],
           actions: {
             list: {
               before: async (request: any, context: any) => {
@@ -284,8 +284,8 @@ const start = async () => {
       "+ New Distribution Plan": {
         component: "UploadDistribution",
       },
-      "+ New GenMemes Allowlist": {
-        component: "UploadGenMemesAllowlist",
+      "+ New NextGen Allowlist": {
+        component: "UploadNextGenAllowlist",
       },
     },
     settings: {
@@ -295,8 +295,8 @@ const start = async () => {
   admin.componentLoader.add("CustomDashboard", "./dashboard");
   admin.componentLoader.add("UploadDistribution", "./uploadDistribution");
   admin.componentLoader.add(
-    "UploadGenMemesAllowlist",
-    "./uploadGenMemesAllowlist"
+    "UploadNextGenAllowlist",
+    "./uploadNextGenAllowlist"
   );
   admin.componentLoader.add("Login", "./login");
   admin.overrideLogin({
@@ -393,7 +393,7 @@ const start = async () => {
   );
 
   app.post(
-    "/genmemes_allowlist",
+    "/nextgen_allowlist",
     upload.single("allowlist"),
     async (req: any, res: any) => {
       const allowlistFile = req.files["allowlist"];
@@ -402,8 +402,8 @@ const start = async () => {
         console.log("Upload Bad Request", msg);
         res.status(400).send(msg);
       } else {
-        console.log("Uploading GenMemes Allowlist", allowlistFile?.name);
-        const response = await uploadGenMemesAllowlist(source, allowlistFile);
+        console.log("Uploading NextGen Allowlist", allowlistFile?.name);
+        const response = await uploadNextGenAllowlist(source, allowlistFile);
 
         if (response.success) {
           res.send(response.merkle_root);

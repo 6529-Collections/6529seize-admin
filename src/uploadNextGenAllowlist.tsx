@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { H4, Text, Button } from "@adminjs/design-system";
 import axios from "axios";
-import { MEMELAB_CONTRACT, MEMES_CONTRACT } from "./constans";
 
-export const UploadGenMemesAllowlistComponent: React.FC = (props: any) => {
+export const UploadNextGenAllowlistComponent: React.FC = (props: any) => {
   const [uploadDisabled, setUploadDisabled] = useState(false);
   const [errors, setErrors] = React.useState<string[]>([]);
   const [allowlistFile, setAllowlistFile] = React.useState<File | undefined>(
@@ -32,7 +31,7 @@ export const UploadGenMemesAllowlistComponent: React.FC = (props: any) => {
 
       console.log("sending file form uploader");
       try {
-        const response = await axios.post("/genmemes_allowlist", formData, {
+        const response = await axios.post("/nextgen_allowlist", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -52,17 +51,18 @@ export const UploadGenMemesAllowlistComponent: React.FC = (props: any) => {
 
   return (
     <div className="dashboardCard">
-      <H4>New GenMemes Allowlist</H4>
+      <H4>New NextGen Allowlist</H4>
       <br />
       <span style={{ fontWeight: "bold" }}>Upload Allowlist file</span>
       <br />
       <br />
       <ul>
         <li>
-          CSV file with 2 columns:
+          CSV file with 3 columns:
           <ul>
             <li>&nbsp;&bull;&nbsp;address</li>
             <li>&nbsp;&bull;&nbsp;spots</li>
+            <li>&nbsp;&bull;&nbsp;info</li>
           </ul>
         </li>
       </ul>
@@ -111,4 +111,4 @@ export const UploadGenMemesAllowlistComponent: React.FC = (props: any) => {
   );
 };
 
-export default UploadGenMemesAllowlistComponent;
+export default UploadNextGenAllowlistComponent;

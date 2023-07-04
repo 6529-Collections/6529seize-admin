@@ -1,5 +1,5 @@
 import { DataSource, EntityManager } from "typeorm";
-import { GenMemesAllowlist, GenMemesCollection } from "./entities/IGenMeme";
+import { NextGenAllowlist, NextGenCollection } from "./entities/INextGen";
 const { keccak256 } = require("@ethersproject/keccak256");
 const { MerkleTree } = require("merkletreejs");
 
@@ -9,6 +9,7 @@ const csv = require("csv-parser");
 interface UploadAllowlist {
   address: string;
   spots: number;
+  info: string;
 }
 
 async function readAllowlist(allowlistFile: any): Promise<UploadAllowlist[]> {
@@ -22,6 +23,7 @@ async function readAllowlist(allowlistFile: any): Promise<UploadAllowlist[]> {
     allowlist.push({
       address: data[0],
       spots: parseInt(data[1]),
+      info: data[2],
     });
   });
 
@@ -37,6 +39,15 @@ async function readAllowlist(allowlistFile: any): Promise<UploadAllowlist[]> {
   return allowlist;
 }
 
+function stringToHex(s: string) {
+  let hexString = "";
+  for (let i = 0; i < s.length; i++) {
+    const hex = s.charCodeAt(i).toString(16);
+    hexString += hex;
+  }
+  return hexString;
+}
+
 async function computeMerkle(allowlist: UploadAllowlist[]): Promise<any> {
   const processedAllowlist = allowlist.map((al) => {
     const parsedAddress = al.address.startsWith("0x")
@@ -44,7 +55,9 @@ async function computeMerkle(allowlist: UploadAllowlist[]): Promise<any> {
       : al.address;
     const spots = al.spots;
     const parsedSpots = spots.toString().padStart(64, "0");
-    const concatenatedData = `${parsedAddress}${parsedSpots}`;
+    const info = al.info;
+    const parsedInfo = stringToHex(info);
+    const concatenatedData = `${parsedAddress}${parsedSpots}${parsedInfo}`;
     const bufferData = Buffer.from(concatenatedData, "hex");
     const result = keccak256(bufferData).slice(2);
 
@@ -58,8 +71,8 @@ async function computeMerkle(allowlist: UploadAllowlist[]): Promise<any> {
   const merkleTree = new MerkleTree(leaves, keccak256, { sortPairs: true });
 
   return {
-    root: merkleTree.getHexRoot(),
-    tree: merkleTree,
+    merkle_root: merkleTree.getHexRoot(),
+    merkle_tree: merkleTree,
     allowlist: processedAllowlist,
   };
 }
@@ -67,35 +80,36 @@ async function computeMerkle(allowlist: UploadAllowlist[]): Promise<any> {
 async function persistAllowlist(
   transactionalEntityManager: EntityManager,
   merkle: {
-    root: string;
-    tree: any;
+    merkle_root: string;
+    merkle_tree: any;
     allowlist: any[];
   }
 ): Promise<void> {
-  const allowlistData: GenMemesAllowlist[] = merkle.allowlist.map((entry) => {
-    const al = new GenMemesAllowlist();
+  const allowlistData: NextGenAllowlist[] = merkle.allowlist.map((entry) => {
+    const al = new NextGenAllowlist();
     al.address = entry.address;
     al.spots = entry.spots;
+    al.info = entry.info;
     al.keccak = entry.keccak;
-    al.merkle_root = merkle.root;
+    al.merkle_root = merkle.merkle_root;
     return al;
   });
 
-  const collection = new GenMemesCollection();
-  collection.merkle_root = merkle.root;
-  collection.merkle_tree = JSON.stringify(merkle.tree);
+  const collection = new NextGenCollection();
+  collection.merkle_root = merkle.merkle_root;
+  collection.merkle_tree = JSON.stringify(merkle.merkle_tree);
 
   await transactionalEntityManager.save(allowlistData);
   await transactionalEntityManager.save(collection);
 
   console.log(
-    `[GENMEMES ALLOWLIST]`,
+    `[NEXTGEN ALLOWLIST]`,
     `[Allowlist persisted]`,
-    `[MERKLE ROOT ${merkle.root}]`
+    `[MERKLE ROOT ${merkle.merkle_root}]`
   );
 }
 
-export async function uploadGenMemesAllowlist(
+export async function uploadNextGenAllowlist(
   source: DataSource,
   allowlistFile: any
 ): Promise<{ success: boolean; merkle_root?: string; error?: any }> {
@@ -104,17 +118,17 @@ export async function uploadGenMemesAllowlist(
       async (transactionalEntityManager) => {
         const allowlist = await readAllowlist(allowlistFile);
         console.log(
-          `[GENMEMES ALLOWLIST]`,
+          `[NEXTGEN ALLOWLIST]`,
           `[Uploading ${allowlist.length} items]`
         );
         const merkle = await computeMerkle(allowlist);
         await persistAllowlist(transactionalEntityManager, merkle);
 
-        return { success: true, merkle_root: merkle.root };
+        return { success: true, merkle_root: merkle.merkle_root };
       }
     );
   } catch (err: any) {
-    console.log(`[GENMEMES ALLOWLIST]`, `[Something went wrong ${err}]`);
+    console.log(`[NEXTGEN ALLOWLIST]`, `[Something went wrong ${err}]`);
     return { success: false, error: err };
   }
 }

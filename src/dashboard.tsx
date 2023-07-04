@@ -41,8 +41,8 @@ export const DashboardHeader: React.FC = () => {
 const resources: { title: string; path: string }[] = [
   { title: "+ New Distribution Plan", path: "/pages/+ New Distribution Plan" },
   {
-    title: "+ New GenMemes Allowlist",
-    path: "/pages/+ New GenMemes Allowlist",
+    title: "+ New NextGen Allowlist",
+    path: "/pages/+ New NextGen Allowlist",
   },
   { title: "OM6529", path: "break" },
   { title: "Admin Users", path: "/resources/AdminUser" },
@@ -51,7 +51,7 @@ const resources: { title: string; path: string }[] = [
   { title: "Distribution", path: "break" },
   { title: "Distributions", path: "/resources/Distribution" },
   { title: "Photos", path: "/resources/DistributionPhoto" },
-  { title: "GenMemes", path: "break" },
+  { title: "NextGen", path: "break" },
   { title: "Collections", path: "/resources/Collections" },
   { title: "Allowlists", path: "/resources/Allowlists" },
 ];

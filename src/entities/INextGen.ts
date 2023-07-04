@@ -6,8 +6,8 @@ import {
   Column,
 } from "typeorm";
 
-@Entity({ name: "gen_memes_allowlist" })
-export class GenMemesAllowlist extends BaseEntity {
+@Entity({ name: "next_gen_allowlist" })
+export class NextGenAllowlist extends BaseEntity {
   @CreateDateColumn({ type: "datetime" })
   created_at!: Date;
 
@@ -21,11 +21,14 @@ export class GenMemesAllowlist extends BaseEntity {
   spots!: number;
 
   @Column({ type: "text" })
+  info!: string;
+
+  @Column({ type: "text" })
   keccak!: string;
 }
 
-@Entity({ name: "gen_memes_collections" })
-export class GenMemesCollection extends BaseEntity {
+@Entity({ name: "next_gen_collections" })
+export class NextGenCollection extends BaseEntity {
   @CreateDateColumn({ type: "datetime" })
   created_at!: Date;
 
