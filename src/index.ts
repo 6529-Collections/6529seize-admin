@@ -218,7 +218,7 @@ const start = async () => {
       },
     },
     branding: {
-      logo: "/Seize_Logo_Glasses_2.png",
+      logo: "https://d3lqz0a4bldqgf.cloudfront.net/seize_images/Seize_Logo_Glasses_2.png",
       favicon: "https://seize.io/favicon.ico",
       companyName: "SEIZE.IO ADMIN",
       withMadeWithLove: false,

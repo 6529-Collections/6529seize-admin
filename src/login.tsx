@@ -5,9 +5,8 @@ import { useSelector } from "react-redux";
 import {
   Box,
   H5,
-  H2,
+  H4,
   Label,
-  Illustration,
   Input,
   FormGroup,
   Button,
@@ -31,7 +30,7 @@ const Wrapper = styled(Box)`
 `;
 
 const StyledLogo = styled.img`
-  max-width: 200px;
+  max-width: 250px;
   margin: ${themeGet("space", "md")} 0;
 `;
 
@@ -52,51 +51,41 @@ export const Login: React.FC<LoginProps> = (props) => {
 
   return (
     <>
-      <Wrapper flex variant="grey">
+      <Wrapper
+        flex
+        variant="grey"
+        style={{ backgroundColor: "rgb(40, 40, 40)" }}>
         <Box
-          bg="white"
+          bg="rgb(40, 40, 40)"
           height="440px"
           flex
-          boxShadow="login"
           width={[1, 2 / 3, "auto"]}>
-          <Box
-            bg="primary100"
-            color="white"
-            p="x3"
-            width="380px"
-            flexGrow={0}
-            display={["none", "none", "block"]}
-            position="relative">
-            <H2 fontWeight="lighter">{translateLabel("loginWelcome")}</H2>
-            <Text fontWeight="lighter" mt="default">
-              {translateMessage("loginWelcome")}
-            </Text>
-            <Text textAlign="center" p="xxl">
-              <Box display="inline" mr="default">
-                <Illustration variant="Planet" width={82} height={91} />
-              </Box>
-              <Box display="inline">
-                <Illustration variant="Astronaut" width={82} height={91} />
-              </Box>
-              <Box display="inline" position="relative" top="-20px">
-                <Illustration variant="FlagInCog" width={82} height={91} />
-              </Box>
-            </Text>
-          </Box>
           <Box
             as="form"
             action={action}
             method="POST"
-            p="x3"
+            p="20px"
             flexGrow={1}
             width={["100%", "100%", "480px"]}>
-            <H5 marginBottom="xxl">
+            <H5 textAlign="center">
               {branding.logo ? (
-                <StyledLogo src={branding.logo} alt={branding.companyName} />
+                <StyledLogo
+                  src={
+                    "https://d3lqz0a4bldqgf.cloudfront.net/seize_images/Seize_Logo_Glasses.png"
+                  }
+                  alt={branding.companyName}
+                />
               ) : (
                 branding.companyName
               )}
             </H5>
+            <H4
+              mt="xl"
+              marginBottom="xxl"
+              textAlign="center"
+              style={{ color: "white" }}>
+              <b>SEIZE.IO ADMIN</b>
+            </H4>
             {message && (
               <MessageBox
                 my="lg"
@@ -109,20 +98,33 @@ export const Login: React.FC<LoginProps> = (props) => {
               />
             )}
             <FormGroup>
-              <Label required>{translateProperty("username")}</Label>
-              <Input name="email" placeholder={translateProperty("username")} />
+              <Label required style={{ color: "white" }}>
+                {translateProperty("username")}
+              </Label>
+              <Input
+                name="email"
+                style={{ backgroundColor: "white", color: "black" }}
+                placeholder={translateProperty("username")}
+              />
             </FormGroup>
             <FormGroup>
-              <Label required>{translateProperty("password")}</Label>
+              <Label required style={{ color: "white" }}>
+                {translateProperty("password")}
+              </Label>
               <Input
                 type="password"
                 name="password"
+                style={{ backgroundColor: "white", color: "black" }}
                 placeholder={translateProperty("password")}
                 autoComplete="new-password"
               />
             </FormGroup>
             <Text mt="xl" textAlign="center">
-              <Button variant="primary">{translateButton("login")}</Button>
+              <Button
+                variant="primary"
+                style={{ backgroundColor: "white", color: "black" }}>
+                {translateButton("login")}
+              </Button>
             </Text>
           </Box>
         </Box>
