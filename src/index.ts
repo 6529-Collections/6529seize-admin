@@ -337,7 +337,7 @@ const start = async () => {
   const server = app.listen(PORT, () => {
     console.log(`SEIZE.IO ADMIN started on :${PORT}${admin.options.rootPath}`);
   });
-  server.timeout = 30000;
+  server.timeout = 60000;
 };
 
 start();
