@@ -269,8 +269,7 @@ const start = async () => {
     },
     branding: {
       logo: "https://d3lqz0a4bldqgf.cloudfront.net/seize_images/Seize_Logo_Glasses_2.png",
-      favicon:
-        "https://d3lqz0a4bldqgf.cloudfront.net/seize_images/Seize_Logo_Icon.png",
+      favicon: "https://seize.io/favicon.ico",
       companyName: "SEIZE.IO ADMIN",
       withMadeWithLove: false,
     },
@@ -417,7 +416,7 @@ const start = async () => {
   const server = app.listen(PORT, () => {
     console.log(`SEIZE.IO ADMIN started on :${PORT}${admin.options.rootPath}`);
   });
-  server.timeout = 30000;
+  server.timeout = 60000;
 };
 
 start();

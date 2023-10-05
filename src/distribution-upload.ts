@@ -36,26 +36,21 @@ async function uploadDistributionFile(
     });
   });
 
-  const wallets = [...distributions].map((d) => d.wallet);
-
-  const tdhBlockResult = await transactionalEntityManager.query(
-    `SELECT block_number FROM tdh_blocks WHERE block_number < ${snapshotBlock} ORDER BY block_number DESC LIMIT 1;`
-  );
-  const tdhBlock = tdhBlockResult[0].block_number;
-
   const tdhResult: {
-    wallet: string;
+    wallets: string[];
     boosted_tdh: number;
     memes_balance: number;
     unique_memes: number;
     gradients_balance: number;
   }[] = await transactionalEntityManager.query(
-    `SELECT wallet, boosted_tdh, memes_balance, unique_memes, gradients_balance FROM tdh WHERE block = ${tdhBlock};`
+    `SELECT wallets, boosted_tdh, memes_balance, unique_memes, gradients_balance FROM tdh_consolidation;`
   );
 
   distributions.map((d) => {
-    const tdh = tdhResult.find(
-      (r) => d.wallet.toUpperCase() == r.wallet.toUpperCase()
+    const tdh = tdhResult.find((r) =>
+      JSON.parse(r.wallets as any).some(
+        (w: string) => d.wallet.toUpperCase() == w.toUpperCase()
+      )
     );
     if (tdh) {
       d.wallet_tdh = tdh.boosted_tdh;
