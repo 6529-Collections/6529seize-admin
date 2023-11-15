@@ -3,6 +3,7 @@ import { Team } from "./entities/ITeam";
 import { Distribution, DistributionPhoto } from "./entities/IDistribution";
 import { AdminUser } from "./entities/IAdminUser";
 import { RoyaltiesUpload } from "./entities/IRoyalties";
+import { MemeLabRoyalty } from "./entities/IMemeLabRoyalty";
 
 const bcrypt = require("bcrypt");
 
@@ -24,6 +25,7 @@ export async function connect() {
       Distribution,
       DistributionPhoto,
       RoyaltiesUpload,
+      MemeLabRoyalty,
     ],
     synchronize: true,
     logging: false,
@@ -50,6 +52,26 @@ export async function connect() {
     );
     console.log("SAVING ADMIN USERS", newAdminUsers.length);
     await userRepo.save(newAdminUsers);
+  }
+
+  const allMemeLab = await AppDataSource.createQueryRunner().query(
+    "SELECT id FROM nfts_meme_lab"
+  );
+  const memelabRoyaltiesRepo = AppDataSource.getRepository(MemeLabRoyalty);
+  for (const item of allMemeLab) {
+    const id = item.id;
+
+    const existingRoyalty = await memelabRoyaltiesRepo.findOne({
+      where: { token_id: id },
+    });
+
+    if (!existingRoyalty) {
+      const newRoyalty = new MemeLabRoyalty();
+      newRoyalty.token_id = id;
+      newRoyalty.royalty = 0;
+
+      await memelabRoyaltiesRepo.save(newRoyalty);
+    }
   }
 
   return AppDataSource;
