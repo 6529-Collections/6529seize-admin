@@ -225,7 +225,7 @@ const start = async () => {
               },
               isEditable: true,
             },
-            royalty: {
+            royalty_split: {
               isVisible: {
                 list: true,
                 filter: true,
@@ -255,13 +255,13 @@ const start = async () => {
                     }
                   );
                 }
-                validateRoyalty(request.payload.royalty);
+                validateRoyalty(request.payload.royalty_split);
                 return request;
               },
             },
             edit: {
               before: async (request: any) => {
-                validateRoyalty(request.payload.royalty);
+                validateRoyalty(request.payload.royalty_split);
                 return request;
               },
             },

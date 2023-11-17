@@ -68,7 +68,7 @@ export async function connect() {
     if (!existingRoyalty) {
       const newRoyalty = new MemeLabRoyalty();
       newRoyalty.token_id = id;
-      newRoyalty.royalty = 0;
+      newRoyalty.royalty_split = 0;
 
       await memelabRoyaltiesRepo.save(newRoyalty);
     }
