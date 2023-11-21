@@ -3,7 +3,11 @@ import { Team } from "./entities/ITeam";
 import { Distribution, DistributionPhoto } from "./entities/IDistribution";
 import { AdminUser } from "./entities/IAdminUser";
 import { RoyaltiesUpload } from "./entities/IRoyalties";
-import { MemeLabRoyalty } from "./entities/IMemeLabRoyalty";
+import {
+  MemeLabArtistRoyalty,
+  MemeLabRoyalty,
+  getSplitForArtist,
+} from "./entities/IMemeLabRoyalty";
 
 const bcrypt = require("bcrypt");
 
@@ -26,6 +30,7 @@ export async function connect() {
       DistributionPhoto,
       RoyaltiesUpload,
       MemeLabRoyalty,
+      MemeLabArtistRoyalty,
     ],
     synchronize: true,
     logging: false,
@@ -50,13 +55,40 @@ export async function connect() {
         }
       })
     );
-    console.log("SAVING ADMIN USERS", newAdminUsers.length);
     await userRepo.save(newAdminUsers);
+    console.log("SAVED ADMIN USERS", newAdminUsers.length);
   }
 
   const allMemeLab = await AppDataSource.createQueryRunner().query(
-    "SELECT id FROM nfts_meme_lab"
+    "SELECT id, artist FROM nfts_meme_lab"
   );
+
+  const memelabArtistRoyaltiesRepo =
+    AppDataSource.getRepository(MemeLabArtistRoyalty);
+
+  for (const item of allMemeLab) {
+    const artist = item.artist;
+
+    const existingRoyalty = await memelabArtistRoyaltiesRepo.findOne({
+      where: { artist: artist },
+    });
+
+    if (!existingRoyalty) {
+      const split = getSplitForArtist(artist);
+      if (split) {
+        const newRoyalty = new MemeLabArtistRoyalty();
+        newRoyalty.artist = artist;
+        newRoyalty.primary_royalty_split = split.primary_split;
+        newRoyalty.secondary_royalty_split = split.secondary_split;
+
+        await memelabArtistRoyaltiesRepo.save(newRoyalty);
+      }
+    }
+  }
+  console.log("SAVED MEMELAB ARTIST ROYALTIES");
+
+  const allMemeLabRoyalties = await memelabArtistRoyaltiesRepo.find();
+
   const memelabRoyaltiesRepo = AppDataSource.getRepository(MemeLabRoyalty);
   for (const item of allMemeLab) {
     const id = item.id;
@@ -66,13 +98,17 @@ export async function connect() {
     });
 
     if (!existingRoyalty) {
+      const royalty = allMemeLabRoyalties.find((r) => r.artist === item.artist);
       const newRoyalty = new MemeLabRoyalty();
       newRoyalty.token_id = id;
-      newRoyalty.royalty_split = 0;
+      newRoyalty.primary_royalty_split = royalty?.primary_royalty_split ?? 0;
+      newRoyalty.secondary_royalty_split =
+        royalty?.secondary_royalty_split ?? 0;
 
       await memelabRoyaltiesRepo.save(newRoyalty);
     }
   }
+  console.log("SAVED MEMELAB ROYALTIES");
 
   return AppDataSource;
 }
