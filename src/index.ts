@@ -8,11 +8,7 @@ import { uploadDistribution } from "./distribution-upload";
 import { AdminUser } from "./entities/IAdminUser";
 import { LoginWrapper } from "./login";
 import { RoyaltiesUpload } from "./entities/IRoyalties";
-import {
-  MemeLabArtistRoyalty,
-  MemeLabRoyalty,
-  validateRoyalty,
-} from "./entities/IMemeLabRoyalty";
+import { MemeLabRoyalty, validateRoyalty } from "./entities/IMemeLabRoyalty";
 
 const multer = require("multer");
 const storage = multer.memoryStorage();
@@ -265,83 +261,6 @@ const start = async () => {
                     },
                     {
                       message: "Invalid token id",
-                    }
-                  );
-                }
-                validateRoyalty(
-                  request.payload.primary_royalty_split,
-                  request.payload.secondary_royalty_split
-                );
-                return request;
-              },
-            },
-            edit: {
-              before: async (request: any) => {
-                validateRoyalty(
-                  request.payload.primary_royalty_split,
-                  request.payload.secondary_royalty_split
-                );
-                return request;
-              },
-            },
-          },
-        },
-      },
-      {
-        resource: MemeLabArtistRoyalty,
-        options: {
-          perPage: 50,
-          sort: {
-            sortBy: "artist",
-            direction: "asc",
-          },
-          properties: {
-            artist: {
-              isVisible: {
-                list: true,
-                filter: true,
-                show: true,
-                edit: true,
-                new: true,
-              },
-              isEditable: true,
-            },
-            primary_royalty_split: {
-              isVisible: {
-                list: true,
-                filter: true,
-                show: true,
-                edit: true,
-                new: true,
-              },
-            },
-            secondary_royalty_split: {
-              isVisible: {
-                list: true,
-                filter: true,
-                show: true,
-                edit: true,
-                new: true,
-              },
-            },
-          },
-          actions: {
-            new: {
-              before: async (request: any) => {
-                const existingRoyalty = await AppDataSource.getRepository(
-                  MemeLabArtistRoyalty
-                ).findOne({
-                  where: { artist: request.payload.artist },
-                });
-                if (existingRoyalty) {
-                  throw new ValidationError(
-                    {
-                      token_id: {
-                        message: "Entry for this artist already exists.",
-                      },
-                    },
-                    {
-                      message: "Invalid artist",
                     }
                   );
                 }

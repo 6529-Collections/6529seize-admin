@@ -1,23 +1,11 @@
 import { Entity, BaseEntity, PrimaryColumn, Column } from "typeorm";
 import { ValidationError } from "adminjs";
-import { ARTIST_ROYALTIES } from "./artist_royalties";
+import { CARD_ROYALTIES } from "./card_royalties";
 
 @Entity({ name: "meme_lab_royalties" })
 export class MemeLabRoyalty extends BaseEntity {
   @PrimaryColumn({ type: "int" })
   token_id!: number;
-
-  @Column({ type: "float" })
-  primary_royalty_split!: number;
-
-  @Column({ type: "float" })
-  secondary_royalty_split!: number;
-}
-
-@Entity({ name: "meme_lab_artist_royalties" })
-export class MemeLabArtistRoyalty extends BaseEntity {
-  @PrimaryColumn({ type: "varchar", length: 100 })
-  artist!: string;
 
   @Column({ type: "float" })
   primary_royalty_split!: number;
@@ -53,14 +41,13 @@ export function validateRoyalty(primarySplit: number, secondarySplit: number) {
   }
 }
 
-export function getSplitForArtist(artistName: string) {
-  const artistEntry = ARTIST_ROYALTIES.find((artist) =>
-    artistName.includes(artist.artist)
-  );
-  return artistEntry
-    ? {
-        primary_split: artistEntry.primary_royalty,
-        secondary_split: artistEntry.secondary_royalty,
-      }
-    : null;
+export function getSplitForCard(id: number): {
+  primary_split: number;
+  secondary_split: number;
+} {
+  const cardEntry = CARD_ROYALTIES.find((c) => c.id === id);
+  return {
+    primary_split: cardEntry?.primary_royalty ?? 0,
+    secondary_split: cardEntry?.secondary_royalty ?? 0,
+  };
 }
