@@ -45,6 +45,7 @@ const resources: { title: string; path: string }[] = [
   { title: "Distributions", path: "/resources/Distribution" },
   { title: "Distribution Photos", path: "/resources/DistributionPhoto" },
   { title: "Royalties Uploads", path: "/resources/RoyaltiesUpload" },
+  { title: "MemeLab Royalties", path: "/resources/MemeLabRoyalty" },
 ];
 
 const Card = styled(Box)`

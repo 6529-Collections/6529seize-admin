@@ -1,13 +1,14 @@
-import AdminJS, { RecordActionResponse } from "adminjs";
+import AdminJS, { ValidationError } from "adminjs";
 import AdminJSExpress from "@adminjs/express";
 import { Team } from "./entities/ITeam";
 import { Distribution, DistributionPhoto } from "./entities/IDistribution";
 import * as AdminJSTypeorm from "@adminjs/typeorm";
-import { authenticate, connect } from "./db-admin";
+import { AppDataSource, authenticate, connect } from "./db-admin";
 import { uploadDistribution } from "./distribution-upload";
 import { AdminUser } from "./entities/IAdminUser";
 import { LoginWrapper } from "./login";
 import { RoyaltiesUpload } from "./entities/IRoyalties";
+import { MemeLabRoyalty, validateRoyalty } from "./entities/IMemeLabRoyalty";
 
 const multer = require("multer");
 const storage = multer.memoryStorage();
@@ -205,12 +206,91 @@ const start = async () => {
           },
         },
       },
+      {
+        resource: MemeLabRoyalty,
+        options: {
+          perPage: 50,
+          sort: {
+            sortBy: "token_id",
+            direction: "asc",
+          },
+          properties: {
+            token_id: {
+              isVisible: {
+                list: true,
+                filter: true,
+                show: true,
+                edit: true,
+                new: true,
+              },
+              isEditable: true,
+            },
+            primary_royalty_split: {
+              isVisible: {
+                list: true,
+                filter: true,
+                show: true,
+                edit: true,
+                new: true,
+              },
+            },
+            secondary_royalty_split: {
+              isVisible: {
+                list: true,
+                filter: true,
+                show: true,
+                edit: true,
+                new: true,
+              },
+            },
+          },
+          actions: {
+            new: {
+              before: async (request: any) => {
+                const existingRoyalty = await AppDataSource.getRepository(
+                  MemeLabRoyalty
+                ).findOne({
+                  where: { token_id: request.payload.token_id },
+                });
+                if (existingRoyalty) {
+                  throw new ValidationError(
+                    {
+                      token_id: {
+                        message: "Entry for this token_id already exists.",
+                      },
+                    },
+                    {
+                      message: "Invalid token id",
+                    }
+                  );
+                }
+                validateRoyalty(
+                  request.payload.primary_royalty_split,
+                  request.payload.secondary_royalty_split
+                );
+                return request;
+              },
+            },
+            edit: {
+              before: async (request: any) => {
+                validateRoyalty(
+                  request.payload.primary_royalty_split,
+                  request.payload.secondary_royalty_split
+                );
+                return request;
+              },
+            },
+          },
+        },
+      },
     ],
     locale: {
       language: "en",
       translations: {
         labels: {
           loginWelcome: "",
+          MemeLabRoyalty: "MemeLab Royalties",
+          MemeLabArtistRoyalty: "MemeLab Artist Royalties",
         },
         messages: {
           loginWelcome: "",
