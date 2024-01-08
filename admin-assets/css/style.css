@@ -52,3 +52,11 @@
   background-color: lightgrey;
   padding: 5px;
 }
+
+.nextgenArtistInput {
+  margin-top: 5px;
+  line-height: 20px;
+  padding: 5px 10px;
+  width: 50%;
+  margin-bottom: 25px;
+}

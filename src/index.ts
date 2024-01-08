@@ -9,6 +9,8 @@ import { AdminUser } from "./entities/IAdminUser";
 import { LoginWrapper } from "./login";
 import { RoyaltiesUpload } from "./entities/IRoyalties";
 import { MemeLabRoyalty, validateRoyalty } from "./entities/IMemeLabRoyalty";
+import { NextGenArtist } from "./entities/INextGenArtist";
+import { createNextGenArtist } from "./create-nextgen-artist";
 
 const multer = require("multer");
 const storage = multer.memoryStorage();
@@ -283,6 +285,20 @@ const start = async () => {
           },
         },
       },
+      {
+        resource: NextGenArtist,
+        options: {
+          perPage: 50,
+          sort: {
+            sortBy: "name",
+            direction: "asc",
+          },
+          listProperties: ["name", "collections"],
+          properties: {
+            name: { isVisible: true },
+          },
+        },
+      },
     ],
     locale: {
       language: "en",
@@ -291,6 +307,7 @@ const start = async () => {
           loginWelcome: "",
           MemeLabRoyalty: "MemeLab Royalties",
           MemeLabArtistRoyalty: "MemeLab Artist Royalties",
+          NextGenArtist: "NextGen Artists",
         },
         messages: {
           loginWelcome: "",
@@ -313,6 +330,9 @@ const start = async () => {
       "+ New Distribution Plan": {
         component: "UploadDistribution",
       },
+      "+ New Nextgen Artist": {
+        component: "AddNextGenArtist",
+      },
     },
     settings: {
       defaultPerPage: 50,
@@ -321,6 +341,8 @@ const start = async () => {
   admin.componentLoader.add("CustomDashboard", "./dashboard");
   admin.componentLoader.add("UploadDistribution", "./uploadDistribution");
   admin.componentLoader.add("Login", "./login");
+  admin.componentLoader.add("AddNextGenArtist", "./addNextgenArtist");
+
   admin.overrideLogin({
     component: LoginWrapper,
     props: {
@@ -413,6 +435,40 @@ const start = async () => {
       }
     }
   );
+
+  app.post("/create_nextgen_artist", async (req: any, res: any) => {
+    const name = req.fields["name"];
+    const collectionId = req.fields["collection_id"];
+    const bio = req.fields["bio"];
+    const pfp = req.files["pfp"];
+    const xLink = req.fields["x_link"];
+    const igLink = req.fields["ig_link"];
+    const discordHandle = req.fields["discord_handle"];
+
+    if (!name || !collectionId || !bio || !pfp) {
+      const msg = "Bad Fields";
+      console.log("Create NextGen Artist Bad Request", msg);
+      res.status(400).send(msg);
+    } else {
+      console.log("Creating NextGen Artist", name, collectionId);
+      const response = await createNextGenArtist(
+        source,
+        name,
+        collectionId,
+        bio,
+        pfp,
+        xLink,
+        igLink,
+        discordHandle
+      );
+
+      if (response.success) {
+        res.send(JSON.stringify(response.artist));
+      } else {
+        res.status(400).send(`${response.error}`);
+      }
+    }
+  });
 
   const server = app.listen(PORT, () => {
     console.log(`SEIZE.IO ADMIN started on :${PORT}${admin.options.rootPath}`);

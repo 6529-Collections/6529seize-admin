@@ -25,7 +25,8 @@
     "mysql2": "^3.2.0",
     "nodemon": "^2.0.21",
     "styled-components": "^5.3.8",
-    "typeorm": "^0.3.12"
+    "typeorm": "^0.3.12",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/mysql": "^2.15.21",

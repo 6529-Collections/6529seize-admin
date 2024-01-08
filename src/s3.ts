@@ -1,5 +1,8 @@
+import path from "path";
+
 const fs = require("fs");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { v4: uuidv4 } = require("uuid");
 
 async function uploadFileToS3(s3: any, filePath: string, fileName: string) {
   const fileContent = await fs.readFileSync(filePath);
@@ -33,4 +36,20 @@ export const uploadPhotos = async (
     })
   );
   return keys;
+};
+
+export const uploadPfp = async (pfp: any): Promise<string> => {
+  const s3 = new S3Client({
+    region: "eu-west-1",
+    credentials: {
+      accessKeyId: process.env.AWS_6529_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.AWS_6529_SECRET_ACCESS_KEY!,
+    },
+  });
+  const name = uuidv4();
+  const fileExtension = path.extname(pfp.name);
+  const key = `nextgen_artists/${process.env.NODE_ENV}/${name}${fileExtension}`;
+  await uploadFileToS3(s3, pfp.path, key);
+  const pfpPath = `https://d3lqz0a4bldqgf.cloudfront.net/${key}`;
+  return pfpPath;
 };

@@ -4,6 +4,7 @@ import { Distribution, DistributionPhoto } from "./entities/IDistribution";
 import { AdminUser } from "./entities/IAdminUser";
 import { RoyaltiesUpload } from "./entities/IRoyalties";
 import { MemeLabRoyalty, getSplitForCard } from "./entities/IMemeLabRoyalty";
+import { NextGenArtist } from "./entities/INextGenArtist";
 
 const bcrypt = require("bcrypt");
 
@@ -26,6 +27,7 @@ export async function connect() {
       DistributionPhoto,
       RoyaltiesUpload,
       MemeLabRoyalty,
+      NextGenArtist,
     ],
     synchronize: true,
     logging: false,
