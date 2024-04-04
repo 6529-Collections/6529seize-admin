@@ -86,10 +86,10 @@ export class DistributionNormalized {
   @Column({ type: "text" })
   wallet_display!: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   card_name!: string;
 
-  @Column({ type: "timestamp" })
+  @Column({ type: "timestamp", nullable: true })
   mint_date!: Date;
 
   @Column({ type: "int" })
