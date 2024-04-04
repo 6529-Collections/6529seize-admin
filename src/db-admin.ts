@@ -1,13 +1,21 @@
 import { DataSource } from "typeorm";
 import { Team } from "./entities/ITeam";
-import { Distribution, DistributionPhoto } from "./entities/IDistribution";
+import {
+  Distribution,
+  DistributionNormalized,
+  DistributionPhoto,
+} from "./entities/IDistribution";
 import { AdminUser } from "./entities/IAdminUser";
 import { RoyaltiesUpload } from "./entities/IRoyalties";
 import { MemeLabRoyalty, getSplitForCard } from "./entities/IMemeLabRoyalty";
 
 const bcrypt = require("bcrypt");
 
-export let AppDataSource: DataSource;
+let AppDataSource: DataSource;
+
+export function getDataSource() {
+  return AppDataSource;
+}
 
 export async function connect() {
   console.log("[DATABASE]", `[DB HOST ${process.env.DB_HOST}]`);
@@ -23,6 +31,7 @@ export async function connect() {
       AdminUser,
       Team,
       Distribution,
+      DistributionNormalized,
       DistributionPhoto,
       RoyaltiesUpload,
       MemeLabRoyalty,

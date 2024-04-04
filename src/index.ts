@@ -2,13 +2,13 @@ import AdminJS, { ValidationError } from "adminjs";
 import AdminJSExpress from "@adminjs/express";
 import { Team } from "./entities/ITeam";
 import { Distribution, DistributionPhoto } from "./entities/IDistribution";
-import * as AdminJSTypeorm from "@adminjs/typeorm";
-import { AppDataSource, authenticate, connect } from "./db-admin";
+import { authenticate, connect, getDataSource } from "./db-admin";
 import { uploadDistribution } from "./distribution-upload";
 import { AdminUser } from "./entities/IAdminUser";
 import { LoginWrapper } from "./login";
 import { RoyaltiesUpload } from "./entities/IRoyalties";
 import { MemeLabRoyalty, validateRoyalty } from "./entities/IMemeLabRoyalty";
+import * as AdminJSTypeorm from "@adminjs/typeorm";
 
 const multer = require("multer");
 const storage = multer.memoryStorage();
@@ -247,11 +247,11 @@ const start = async () => {
           actions: {
             new: {
               before: async (request: any) => {
-                const existingRoyalty = await AppDataSource.getRepository(
-                  MemeLabRoyalty
-                ).findOne({
-                  where: { token_id: request.payload.token_id },
-                });
+                const existingRoyalty = await getDataSource()
+                  .getRepository(MemeLabRoyalty)
+                  .findOne({
+                    where: { token_id: request.payload.token_id },
+                  });
                 if (existingRoyalty) {
                   throw new ValidationError(
                     {
@@ -354,65 +354,61 @@ const start = async () => {
   app.use(bodyParser.json({ limit: "50mb" }));
   app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
-  app.post(
-    "/upload",
-    upload.single("distribution"),
-    async (req: any, res: any) => {
-      const contract = req.fields["contract"];
-      const cardId = req.fields["card_id"];
-      const snapshotBlock = req.fields["snapshot_block"];
-      const distributionFile = req.files["distribution"];
-      const photoKeys: any[] = Object.keys(req.files).filter((f: any) =>
-        f.startsWith("photo")
+  app.post("/upload", async (req: any, res: any) => {
+    const contract = req.fields["contract"];
+    const cardId = req.fields["card_id"];
+    const snapshotBlock = req.fields["snapshot_block"];
+    const distributionFile = req.files["distribution"];
+    const photoKeys: any[] = Object.keys(req.files).filter((f: any) =>
+      f.startsWith("photo")
+    );
+    const photos = photoKeys.map((key) => req.files[key]);
+    if (!contract || contract == "undefined") {
+      const msg = "Bad Contract";
+      console.log("Upload Bad Request", msg);
+      res.status(400).send(msg);
+    } else if (!cardId || cardId == "undefined") {
+      const msg = "Bad Card ID";
+      console.log("Upload Bad Request", msg);
+      res.status(400).send(msg);
+    } else if (
+      (!snapshotBlock || snapshotBlock == "undefined") &&
+      distributionFile
+    ) {
+      const msg = "Missing Snapshot Block";
+      console.log("Upload Bad Request", msg);
+      res.status(400).send(msg);
+    } else if (
+      (!distributionFile || distributionFile == "undefined") &&
+      photoKeys.length == 0
+    ) {
+      const msg = "Provide either distributionFile or photos";
+      console.log("Upload Bad Request", msg);
+      res.status(400).send(msg);
+    } else {
+      console.log(
+        "Uploading",
+        contract,
+        cardId,
+        distributionFile?.name,
+        photoKeys.length
       );
-      const photos = photoKeys.map((key) => req.files[key]);
-      if (!contract || contract == "undefined") {
-        const msg = "Bad Contract";
-        console.log("Upload Bad Request", msg);
-        res.status(400).send(msg);
-      } else if (!cardId || cardId == "undefined") {
-        const msg = "Bad Card ID";
-        console.log("Upload Bad Request", msg);
-        res.status(400).send(msg);
-      } else if (
-        (!snapshotBlock || snapshotBlock == "undefined") &&
-        distributionFile
-      ) {
-        const msg = "Missing Snapshot Block";
-        console.log("Upload Bad Request", msg);
-        res.status(400).send(msg);
-      } else if (
-        (!distributionFile || distributionFile == "undefined") &&
-        photoKeys.length == 0
-      ) {
-        const msg = "Provide either distributionFile or photos";
-        console.log("Upload Bad Request", msg);
-        res.status(400).send(msg);
-      } else {
-        console.log(
-          "Uploading",
-          contract,
-          cardId,
-          distributionFile?.name,
-          photoKeys.length
-        );
-        const response = await uploadDistribution(
-          source,
-          contract,
-          cardId,
-          snapshotBlock,
-          distributionFile,
-          photos
-        );
+      const response = await uploadDistribution(
+        source,
+        contract,
+        cardId,
+        snapshotBlock,
+        distributionFile,
+        photos
+      );
 
-        if (response.success) {
-          res.send("Upload complete.");
-        } else {
-          res.status(400).send(`${response.error}`);
-        }
+      if (response.success) {
+        res.send("Upload complete.");
+      } else {
+        res.status(400).send(`${response.error}`);
       }
     }
-  );
+  });
 
   const server = app.listen(PORT, () => {
     console.log(`SEIZE.IO ADMIN started on :${PORT}${admin.options.rootPath}`);
