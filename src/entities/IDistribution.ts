@@ -3,10 +3,10 @@ import {
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
-  PrimaryColumn,
   Column,
   PrimaryGeneratedColumn,
   Index,
+  PrimaryColumn,
 } from "typeorm";
 
 @Entity({ name: "distribution" })
@@ -65,4 +65,48 @@ export class DistributionPhoto extends BaseEntity {
 
   @Column({ type: "text" })
   link!: string;
+}
+
+export interface AllowlistNormalizedEntry {
+  phase: string;
+  spots: number;
+}
+
+@Entity({ name: "distribution_normalized" })
+export class DistributionNormalized {
+  @PrimaryColumn({ type: "bigint" })
+  card_id!: number;
+
+  @PrimaryColumn({ type: "varchar", length: 50 })
+  contract!: string;
+
+  @PrimaryColumn({ type: "varchar", length: 50 })
+  wallet!: string;
+
+  @Column({ type: "text" })
+  wallet_display!: string;
+
+  @Column({ type: "text" })
+  card_name!: string;
+
+  @Column({ type: "timestamp" })
+  mint_date!: Date;
+
+  @Column({ type: "int" })
+  airdrops!: number;
+
+  @Column({ type: "int" })
+  total_spots!: number;
+
+  @Column({ type: "int" })
+  total_count!: number;
+
+  @Column({ type: "int" })
+  minted!: number;
+
+  @Column({ type: "json", nullable: true })
+  allowlist!: AllowlistNormalizedEntry[];
+
+  @Column({ type: "json", nullable: true })
+  phases!: string[];
 }

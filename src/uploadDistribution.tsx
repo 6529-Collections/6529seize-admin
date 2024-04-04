@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { H4, Text, Button } from "@adminjs/design-system";
 import axios from "axios";
 import { MEMELAB_CONTRACT, MEMES_CONTRACT } from "./constans";
@@ -56,11 +56,6 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
           if (event.target?.result) {
             const csvContent = event.target.result.toString();
             const csvRows = csvContent.split("\n");
-            const distributions: {
-              wallet: string;
-              phase: string;
-              count: number;
-            }[] = [];
             csvRows.map((row: string, index: number) => {
               try {
                 if (row) {
@@ -71,13 +66,6 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
 
                   if (!phase || !wallet || !count) {
                     newerrors.push(`- something wrong at row index ${index}`);
-                  } else {
-                    const d = {
-                      wallet: wallet,
-                      phase: phase,
-                      count: parseInt(count),
-                    };
-                    distributions.push(d);
                   }
                 }
               } catch {
@@ -92,28 +80,26 @@ export const UploadDistributionComponent: React.FC = (props: any) => {
         setUploadDisabled(false);
       } else {
         setErrors([]);
-        const formData = new FormData();
-        if (distributionFile) {
-          formData.append("distribution", distributionFile);
-        }
-        formData.append("card_id", distributionCardId!.toString());
-        formData.append("contract", distributionContract!);
-
-        if (distributionSnapshotBlock) {
-          formData.append(
-            "snapshot_block",
-            distributionSnapshotBlock.toString()
-          );
-        }
-        distributionPhotos.map((dp, index) => {
-          formData.append(`photo${index}`, dp);
-        });
-        console.log("sending file form uploader");
         try {
+          const formData = new FormData();
+          if (distributionFile) {
+            formData.append("distribution", distributionFile);
+          }
+          formData.append("card_id", distributionCardId!.toString());
+          formData.append("contract", distributionContract!);
+
+          if (distributionSnapshotBlock) {
+            formData.append(
+              "snapshot_block",
+              distributionSnapshotBlock.toString()
+            );
+          }
+          distributionPhotos.map((dp, index) => {
+            formData.append(`photo${index}`, dp);
+          });
+          console.log("sending file form uploader");
           await axios.post("/upload", formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
+            timeout: 600000,
           });
           setSuccess({
             status: true,
