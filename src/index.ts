@@ -355,6 +355,8 @@ const start = async () => {
   app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
   app.post("/upload", async (req: any, res: any) => {
+    req.setTimeout(600000);
+
     const contract = req.fields["contract"];
     const cardId = req.fields["card_id"];
     const snapshotBlock = req.fields["snapshot_block"];
