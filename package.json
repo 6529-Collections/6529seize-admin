@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@adminjs/express": "^5.1.0",
+    "@adminjs/express": "^6.0.0",
     "@adminjs/typeorm": "^4.0.0",
     "@aws-sdk/client-s3": "^3.282.0",
     "@types/node": "^18.14.5",
