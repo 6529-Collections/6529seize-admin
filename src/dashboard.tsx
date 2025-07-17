@@ -31,7 +31,7 @@ export const DashboardHeader: React.FC = () => {
         py={pageHeaderPaddingY}
         px={["default", "lg", pageHeaderPaddingX]}>
         <Text textAlign="center" color="white">
-          <H2>SEIZO.IO ADMIN</H2>
+          <H2>6529.io ADMIN</H2>
         </Text>
       </Box>
     </Box>

@@ -52,3 +52,7 @@
   background-color: lightgrey;
   padding: 5px;
 }
+
+.adminjs_Logo img {
+  max-height: 75px;
+}
