@@ -73,6 +73,10 @@ export interface AllowlistNormalizedEntry {
 }
 
 @Entity({ name: "distribution_normalized" })
+@Index("idx_wallet_contract_cardid", ["wallet", "contract", "card_id"])
+@Index("idx_cardname", ["card_name", "contract", "card_id"])
+@Index("idx_mintdate", ["mint_date", "contract", "card_id"])
+@Index("idx_contract_cardid", ["contract", "card_id"])
 export class DistributionNormalized {
   @PrimaryColumn({ type: "bigint" })
   card_id!: number;
@@ -86,7 +90,7 @@ export class DistributionNormalized {
   @Column({ type: "text" })
   wallet_display!: string;
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "varchar", length: 500, nullable: true })
   card_name!: string;
 
   @Column({ type: "timestamp", nullable: true })
@@ -109,4 +113,12 @@ export class DistributionNormalized {
 
   @Column({ type: "json", nullable: true })
   phases!: string[];
+
+  @Column({
+    type: "tinyint",
+    name: "is_missing_info",
+    insert: false,
+    update: false,
+  })
+  is_missing_info!: boolean;
 }

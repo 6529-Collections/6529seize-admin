@@ -30,7 +30,7 @@ const Wrapper = styled(Box)`
 `;
 
 const StyledLogo = styled.img`
-  max-width: 250px;
+  max-height: 75px;
   margin: ${themeGet("space", "md")} 0;
 `;
 
@@ -70,9 +70,7 @@ export const Login: React.FC<LoginProps> = (props) => {
             <H5 textAlign="center">
               {branding.logo ? (
                 <StyledLogo
-                  src={
-                    "https://d3lqz0a4bldqgf.cloudfront.net/seize_images/Seize_Logo_Glasses.png"
-                  }
+                  src={"https://6529.io/6529.png"}
                   alt={branding.companyName}
                 />
               ) : (
@@ -84,7 +82,7 @@ export const Login: React.FC<LoginProps> = (props) => {
               marginBottom="xxl"
               textAlign="center"
               style={{ color: "white" }}>
-              <b>SEIZE.IO ADMIN</b>
+              <b>6529.io ADMIN</b>
             </H4>
             {message && (
               <MessageBox
