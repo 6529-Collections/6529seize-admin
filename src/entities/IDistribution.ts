@@ -77,6 +77,7 @@ export interface AllowlistNormalizedEntry {
 @Index("idx_cardname", ["card_name", "contract", "card_id"])
 @Index("idx_mintdate", ["mint_date", "contract", "card_id"])
 @Index("idx_contract_cardid", ["contract", "card_id"])
+@Index("idx_missing_info", ["is_missing_info", "contract", "card_id"])
 export class DistributionNormalized {
   @PrimaryColumn({ type: "bigint" })
   card_id!: number;
