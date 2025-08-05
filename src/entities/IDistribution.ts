@@ -1,12 +1,12 @@
 import {
-  Entity,
   BaseEntity,
-  CreateDateColumn,
-  UpdateDateColumn,
   Column,
-  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  Entity,
   Index,
   PrimaryColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 
 @Entity({ name: "distribution" })
@@ -120,6 +120,9 @@ export class DistributionNormalized {
     name: "is_missing_info",
     insert: false,
     update: false,
+    generatedType: "STORED",
+    asExpression: `card_name IS NULL OR card_name = '' OR mint_date IS NULL`,
+    nullable: false,
   })
   is_missing_info!: boolean;
 }
