@@ -22,7 +22,7 @@
     "csv-parser": "^3.0.0",
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
-    "mysql2": "^3.2.0",
+    "mysql2": "^3.9.4",
     "nodemon": "^2.0.21",
     "styled-components": "^5.3.8",
     "typeorm": "^0.3.12"
